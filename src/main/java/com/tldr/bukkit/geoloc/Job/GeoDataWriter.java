@@ -1,8 +1,8 @@
-package com.myplugintest.geoloc.Job;
+package com.tldr.bukkit.geoloc.Job;
 
 import com.google.gson.Gson;
-import com.myplugintest.geoloc.GeoData;
-import com.myplugintest.geoloc.GeolocationPlugin;
+import com.tldr.bukkit.geoloc.GeoData;
+import com.tldr.bukkit.geoloc.GeolocationPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.FileWriter;
@@ -22,13 +22,18 @@ public class GeoDataWriter extends BukkitRunnable {
 
     @Override
     public void run () {
-//        File outFile = new File(context.outputPath);
-//        context.getLogger().info(String.format("writing geo data to: %s", outFile.getAbsoluteFile()));
         try {
             FileWriter writer = new FileWriter(context.outputFile);
             writer.write(gson.toJson(data));
             writer.close();
         } catch (IOException e) {
+            /*StringWriter exceptionString = new StringWriter();
+            exceptionString
+                    .append("Couldn't write to an output file: ")
+                    .append(e.getLocalizedMessage())
+                    .append("\n");*/
+
+            context.getLogger().warning(String.format("Couldn't write to an output file: %s", e.getLocalizedMessage()));
             e.printStackTrace();
         }
     }

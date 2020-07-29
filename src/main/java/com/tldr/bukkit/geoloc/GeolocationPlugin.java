@@ -1,20 +1,29 @@
-package com.myplugintest.geoloc;
+package com.tldr.bukkit.geoloc;
 
-import com.myplugintest.geoloc.Job.GeoDataCollector;
-import com.myplugintest.geoloc.Listener.Test;
+import com.tldr.bukkit.geoloc.Job.GeoDataCollector;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
 public class GeolocationPlugin extends JavaPlugin {
     public File outputFile;
+    public long updateTicks;
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         String outDir = getConfig().getString("outputDirectory");
         if (outDir == null) {
             getLogger().warning("Configuration didn't provide 'outputDirectory' property. Plugin won't work.");
-            saveDefaultConfig();
+            return;
+        }
+
+        updateTicks = getConfig().getLong("updateTicks");
+
+        if (updateTicks <= 0) {
+            getLogger().warning("Update ticks must be more than zero. Using default value 100L");
+            updateTicks = 100L;
             return;
         }
 
@@ -23,12 +32,12 @@ public class GeolocationPlugin extends JavaPlugin {
             outputFile = new File(outDirFile.getAbsoluteFile() + File.separator + "geodata.json");
             registerJobs();
             registerListeners();
-            getLogger().info(String.format("Geolocation plugin loaded. Data output file: %s", outputFile.getAbsoluteFile()));
+            getLogger().info(String.format("Geolocation plugin loaded. Data output: %s", outputFile.getAbsoluteFile()));
         }
         else {
             String error = "Incorrect configuration. ";
             if (!outDirFile.exists())
-                error = error.concat("Directory doesn't exist");
+                error = error.concat(String.format("Directory '%s' doesn't exist", outDirFile.getAbsolutePath()));
             else if (!outDirFile.isDirectory())
                 error = error.concat("Path have to be an existing directory");
             else
@@ -42,6 +51,6 @@ public class GeolocationPlugin extends JavaPlugin {
     }
 
     private void registerJobs () {
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new GeoDataCollector(this), 0L, 100L);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new GeoDataCollector(this), 0L, updateTicks);
     }
 }

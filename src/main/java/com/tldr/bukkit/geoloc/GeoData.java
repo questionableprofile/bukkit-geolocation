@@ -1,4 +1,4 @@
-package com.myplugintest.geoloc;
+package com.tldr.bukkit.geoloc;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
