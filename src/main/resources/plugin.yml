@@ -1,0 +1,8 @@
+name: MapGeolocPlugin
+main: com.myplugintest.geoloc.GeolocationPlugin
+version: 1
+
+commands:
+  pos:
+    description: Test descrption
+    usage: "Test shit"
